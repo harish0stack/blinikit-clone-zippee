@@ -1,0 +1,3 @@
+-- Seed data for development
+-- Applied via MCP execute_sql tool in Phase 2
+-- DO NOT run on production
