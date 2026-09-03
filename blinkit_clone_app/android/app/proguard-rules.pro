@@ -34,7 +34,12 @@
 # -keep class com.razorpay.** { *; }  ← uncomment in Phase 5
 
 # ─── Firebase / FCM (Phase 7) ────────────────────────────────────────────────
-# -keep class com.google.firebase.** { *; }  ← uncomment in Phase 7
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+-keep class com.dexterous.flutterlocalnotifications.** { *; }
+-dontwarn com.dexterous.flutterlocalnotifications.**
 
 # ─── General safety rules ────────────────────────────────────────────────────
 -keepattributes InnerClasses

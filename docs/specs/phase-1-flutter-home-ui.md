@@ -4,7 +4,7 @@
 > ```
 > Read: /Users/harishkumavat/blinkit-clone/docs/context/SESSION_CONTEXT.md
 > Read: /Users/harishkumavat/blinkit-clone/docs/specs/phase-1-flutter-home-ui.md
-> Branch: phase-1-flutter-ui
+
 > Phase 0 is COMPLETE. Do not re-scaffold anything from Phase 0.
 > ```
 
@@ -161,6 +161,48 @@ File: `lib/core/theme/app_theme.dart`:
 - Error: `#FF3B3B`
 - Font: Inter (Google Fonts)
 - Consistent border radius: 8dp cards, 20dp buttons
+
+## Typography — Inter (via `google_fonts` package), weights/sizes/colors as observed
+| Element | Size | Weight | Color | Notes |
+|---|---|---|---|---|
+| "Blinkit in" | 14sp | 500 (Medium) | `#FFFFFF` at ~85% opacity | over gold gradient |
+| "14 minut..." (ETA, truncated) | 28sp | 800 (ExtraBold) | `#FFFFFF` | single line, ellipsis |
+| "Sindhu Nagar, Sewri ▾" | 15sp | 600 (SemiBold) | `#FFFFFF` | includes small down-chevron icon |
+| Search placeholder `Search "healthy snacks"` | 15sp | 400 (Regular) | `#6B7280` | inside white/98%-opacity pill, height ~48dp, radius 24 |
+| Tab labels (All / Janmashtami / Electronics / Beau...) | 13sp | 600 (SemiBold) | `#FFFFFF` (active "All" has bold white + underline; others slightly lower opacity ~90%) | icon above label, ~56dp tap target |
+| "New" pill on Janmashtami | 10sp | 700 (Bold) | white text on `#E23744` red pill | |
+| "WELCOME" banner headline | 26sp | 800 (ExtraBold) | `#3D2B00` (dark brown, embossed look) | decorative, can approximate with plain bold text over the banner image |
+| "Order now and enjoy great offers" | 14sp | 500 | `#5A4419` | |
+| "OFFERS FOR YOU" small caps label | 11sp | 700, letter-spacing 1.2 | `#8A6A1E` | |
+| Offer tile headline ("Enjoy FLAT ₹50 OFF") | 14sp | 700 | `#1C1C1C` | |
+| Offer tile subtext | 12sp | 400 | `#6B7280` | |
+| Section header "Bestsellers" | 22sp | 800 (ExtraBold) | `#1C1C1C` | |
+| "+240 more" pill on product stack | 11sp | 600 | `#1C1C1C` on `#F1F1F1` chip | |
+| Category label under product stack ("Drinks & Juices") | 15sp | 700 | `#1C1C1C` | 2-line max, center-aligned |
+| Bottom nav labels | 11sp | 600 (active), 500 (inactive) | `#1C1C1C` active / `#8E9AAB` inactive | |
+ 
+## Colors
+| Token | Hex (verify with eyedropper) | Usage |
+|---|---|---|
+| `headerGradientTop` | `#7A5A17` | top of header gradient |
+| `headerGradientBottom` | `#C9A227` | bottom of header gradient, blends into white content |
+| `pageBackground` | `#FFFFFF` | below header |
+| `categoryTileBg` | `#EAF4F4` | mint/pale-teal product-stack background squares |
+| `chipGray` | `#F1F1F1` | "+N more" chip |
+| `textPrimary` | `#1C1C1C` | headings/body |
+| `textSecondary` | `#6B7280` | subtext, placeholders |
+| `navInactive` | `#8E9AAB` | inactive nav icon/label |
+| `redAccent` | `#E23744` | "New" pill, Zomato pill |
+ 
+## Layout (top → bottom, exact spacing to replicate)
+1. **Header** (gold gradient, ~230dp tall, rounded-bottom none, extends full width): row 1 = "Blinkit in / 14 minut..." (left, stacked) + wallet chip + profile circle (right, 40dp circle each, 8dp gap). Row 2 = address pill with down-chevron. Row 3 = search bar (white, 48dp height, 16dp horizontal margin, 24dp radius, mic icon right-aligned inside).
+2. **Tab rail**: horizontal scroll, 4+ visible tabs, icon (28dp) above label, "All" active with white underline indicator (2dp, 24dp wide, centered).
+3. **Welcome banner**: full-bleed image, ~180dp tall, headline overlay centered.
+4. **Offers row**: 2 tiles side by side, 12dp gap, 12dp radius, icon + 2-line text each.
+5. **"Bestsellers" section header**: 24dp top margin, 16dp horizontal padding.
+6. **Product stack grid**: 3 columns, each column = 2×2 mini-grid of product thumbnails inside one rounded `categoryTileBg` card (aspect ~1:1), "+N more" chip bottom-right overlapping the card corner, category label centered below card.
+7. **Bottom nav**: fixed, 64dp height, white background, top hairline border `#EDEDED` 1dp, 4 icon+label items evenly spaced + Zomato red pill anchored right edge.
+**Do not render the 3 Android system nav buttons** — build only from the status bar down to the app's own bottom nav.
 
 ### Step 7 — Screens implementation order
 

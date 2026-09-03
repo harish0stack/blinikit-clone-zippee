@@ -6,10 +6,14 @@ class Env {
   Env._();
 
   /// Supabase project REST/Realtime URL
-  /// Pass via: --dart-define=SUPABASE_URL=https://bbupnuatcjtcwuzwgvrh.supabase.co
-  static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static const supabaseUrl = String.fromEnvironment(
+    'SUPABASE_URL',
+    defaultValue: 'https://bbupnuatcjtcwuzwgvrh.supabase.co',
+  );
 
   /// Supabase anon (publishable) key — safe to expose to clients
-  /// Pass via: --dart-define=SUPABASE_ANON_KEY=eyJ...
-  static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  static const supabaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+    defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJidXBudWF0Y2p0Y3d1endndnJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMjg1MzEsImV4cCI6MjEwMTkwNDUzMX0.oqEae9MvAOSiZ6EpTWCNiSq31qhkBHSE1hgja8YFiRU',
+  );
 }

@@ -1,3 +1,438 @@
-[]
-
-
+{
+  "categories": [
+    {
+      "id": "cat_drinks",
+      "name": "Drinks &\nJuices",
+      "moreCount": 240,
+      "sectionType": "bestseller",
+      "images": [
+        "assets/figma-assests/products-img/diet_coke.png",
+        "assets/figma-assests/products-img/coke.png",
+        "assets/figma-assests/products-img/sprite.png",
+        "assets/figma-assests/products-img/coca_cola.png"
+      ]
+    },
+    {
+      "id": "cat_chips",
+      "name": "Chips &\nNamkeen",
+      "moreCount": 501,
+      "sectionType": "bestseller",
+      "images": [
+        "assets/figma-assests/products-img/lays_blue.png",
+        "assets/figma-assests/products-img/lays_orange.png",
+        "assets/figma-assests/products-img/kurkure_green.png",
+        "assets/figma-assests/products-img/kurkure_orange.png"
+      ]
+    },
+    {
+      "id": "cat_veggies",
+      "name": "Vegetables\n& Fruits",
+      "moreCount": 173,
+      "sectionType": "bestseller",
+      "images": [
+        "assets/figma-assests/products-img/potatoes.png",
+        "assets/figma-assests/products-img/onions.png",
+        "assets/figma-assests/products-img/bananas.png",
+        "assets/figma-assests/products-img/chillies.png"
+      ]
+    },
+    {
+      "id": "cat_dairy",
+      "name": "Dairy,\nBread & ...",
+      "moreCount": 37,
+      "sectionType": "bestseller",
+      "images": [
+        "assets/figma-assests/products-img/amul_butter.png",
+        "assets/figma-assests/products-img/brownie.png",
+        "assets/figma-assests/products-img/milk_blue.png",
+        "assets/figma-assests/products-img/milk_pouch.png"
+      ]
+    },
+    {
+      "id": "cat_icecreams",
+      "name": "Ice\nCreams ...",
+      "moreCount": 74,
+      "sectionType": "bestseller",
+      "images": [
+        "assets/figma-assests/products-img/icecream_cup.png",
+        "assets/figma-assests/products-img/icecream_snack.png",
+        "assets/figma-assests/products-img/amul_tub.png",
+        "assets/figma-assests/products-img/icecream_stick.png"
+      ]
+    },
+    {
+      "id": "cat_bakery",
+      "name": "Bakery &\nBiscuits",
+      "moreCount": 225,
+      "sectionType": "bestseller",
+      "images": [
+        "assets/figma-assests/products-img/hide_and_seek.png",
+        "assets/figma-assests/products-img/dark_fantasy_red.png",
+        "assets/figma-assests/products-img/biscuit_green.png",
+        "assets/figma-assests/products-img/dark_fantasy_black.png"
+      ]
+    },
+    {
+      "id": "gk_veggies",
+      "name": "Vegetables & Fruits",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/Fresh Vegetables Online/imgi_7_157_1643443974388.png"]
+    },
+    {
+      "id": "gk_atta",
+      "name": "Atta,\nRice & Dal",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/chips and namkeen/imgi_11_rc-upload-1776240040304-421.png"]
+    },
+    {
+      "id": "gk_oil",
+      "name": "Oil, Ghee\n& Masala",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/biscuits and cookies/imgi_16_0ac12d25-6f57-4a1e-b649-efb308103607.png"]
+    },
+    {
+      "id": "gk_dairy",
+      "name": "Dairy,\nBread & Eggs",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/dairy-bread-eggs/imgi_17_eb2ba2ce-96fd-43cb-acc0-2a04ff6b810d.png"]
+    },
+    {
+      "id": "gk_bakery",
+      "name": "Bakery &\nBiscuits",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/biscuits and cookies/imgi_20_rc-upload-1776829632782-42.png"]
+    },
+    {
+      "id": "gk_dryfruits",
+      "name": "Dry Fruits\n& Cereals",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/chips and namkeen/imgi_21_rc-upload-1776375127483-57.png"]
+    },
+    {
+      "id": "gk_chicken",
+      "name": "Chicken,\nMeat & Fish",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/dairy-bread-eggs/imgi_18_42badb39-3720-4e49-8e19-980a10367928.png"]
+    },
+    {
+      "id": "gk_kitchen",
+      "name": "Kitchenware\n& Appliances",
+      "sectionType": "grocery",
+      "images": ["assets/product-images/pet food and supplies/imgi_22_rc-upload-1786593189552-94.png"]
+    },
+    {
+      "id": "snack_chips",
+      "name": "Chips &\nNamkeen",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/chips and namkeen/imgi_12_rc-upload-1776398906000-172.png"]
+    },
+    {
+      "id": "snack_sweets",
+      "name": "Sweets &\nChocolates",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/dairy-bread-eggs/imgi_13_b91b3590-34ae-4f9b-a53a-6951452fb937.png"]
+    },
+    {
+      "id": "snack_drinks",
+      "name": "Drinks &\nJuices",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/Energy Drinks and juices/imgi_16_f2744d52-8878-4353-81e5-e5f17c9584b7.png"]
+    },
+    {
+      "id": "snack_tea",
+      "name": "Tea,\nCoffee & More",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/chips and namkeen/imgi_27_rc-upload-1780634830965-699.png"]
+    },
+    {
+      "id": "snack_instant",
+      "name": "Instant\nFood",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/chips and namkeen/imgi_20_rc-upload-1776398906000-170.png"]
+    },
+    {
+      "id": "snack_sauces",
+      "name": "Sauces &\nSpreads",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/Fresh Vegetables Online/imgi_14_e29ff4ab-7a96-4b90-b251-0489fa0416a2.png"]
+    },
+    {
+      "id": "snack_paan",
+      "name": "Paan\nCorner",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/pet food and supplies/imgi_16_5a07ab88-349f-4884-aae2-87ec47fed05a.png"]
+    },
+    {
+      "id": "snack_icecream",
+      "name": "Ice Creams\n& More",
+      "sectionType": "snacks",
+      "images": ["assets/product-images/dairy-bread-eggs/imgi_5_bc94259c-f293-4289-abc5-f4cb0da63270.png"]
+    }
+  ],
+  "products": [
+    {
+      "id": "prod_diet_coke",
+      "name": "Diet Coke Can",
+      "unit": "300 ml",
+      "imageUrl": "assets/figma-assests/products-img/diet_coke.png",
+      "categoryId": "cat_drinks",
+      "mrp": 40.0,
+      "sellingPrice": 38.0,
+      "inStock": true,
+      "discountPercent": 5
+    },
+    {
+      "id": "prod_coke",
+      "name": "Coca-Cola Original Taste",
+      "unit": "750 ml",
+      "imageUrl": "assets/figma-assests/products-img/coke.png",
+      "categoryId": "cat_drinks",
+      "mrp": 45.0,
+      "sellingPrice": 40.0,
+      "inStock": true,
+      "discountPercent": 11
+    },
+    {
+      "id": "prod_sprite",
+      "name": "Sprite Lime Flavored",
+      "unit": "750 ml",
+      "imageUrl": "assets/figma-assests/products-img/sprite.png",
+      "categoryId": "cat_drinks",
+      "mrp": 45.0,
+      "sellingPrice": 40.0,
+      "inStock": true,
+      "discountPercent": 11
+    },
+    {
+      "id": "prod_coca_cola",
+      "name": "Coca-Cola Zero Sugar",
+      "unit": "300 ml",
+      "imageUrl": "assets/figma-assests/products-img/coca_cola.png",
+      "categoryId": "cat_drinks",
+      "mrp": 40.0,
+      "sellingPrice": 36.0,
+      "inStock": true,
+      "discountPercent": 10
+    },
+    {
+      "id": "prod_lays_blue",
+      "name": "Lay's India's Magic Masala",
+      "unit": "50 g",
+      "imageUrl": "assets/figma-assests/products-img/lays_blue.png",
+      "categoryId": "cat_chips",
+      "mrp": 20.0,
+      "sellingPrice": 20.0,
+      "inStock": true,
+      "discountPercent": 0
+    },
+    {
+      "id": "prod_lays_orange",
+      "name": "Lay's Spanish Tomato Tango",
+      "unit": "50 g",
+      "imageUrl": "assets/figma-assests/products-img/lays_orange.png",
+      "categoryId": "cat_chips",
+      "mrp": 20.0,
+      "sellingPrice": 18.0,
+      "inStock": true,
+      "discountPercent": 10
+    },
+    {
+      "id": "prod_kurkure_green",
+      "name": "Kurkure Green Chutney Style",
+      "unit": "75 g",
+      "imageUrl": "assets/figma-assests/products-img/kurkure_green.png",
+      "categoryId": "cat_chips",
+      "mrp": 20.0,
+      "sellingPrice": 19.0,
+      "inStock": true,
+      "discountPercent": 5
+    },
+    {
+      "id": "prod_kurkure_orange",
+      "name": "Kurkure Masala Munch",
+      "unit": "85 g",
+      "imageUrl": "assets/figma-assests/products-img/kurkure_orange.png",
+      "categoryId": "cat_chips",
+      "mrp": 20.0,
+      "sellingPrice": 20.0,
+      "inStock": true,
+      "discountPercent": 0
+    },
+    {
+      "id": "prod_potatoes",
+      "name": "Fresh Potato (Aloo)",
+      "unit": "1 kg",
+      "imageUrl": "assets/figma-assests/products-img/potatoes.png",
+      "categoryId": "cat_veggies",
+      "mrp": 35.0,
+      "sellingPrice": 28.0,
+      "inStock": true,
+      "discountPercent": 20
+    },
+    {
+      "id": "prod_onions",
+      "name": "Fresh Onion (Pyaz)",
+      "unit": "1 kg",
+      "imageUrl": "assets/figma-assests/products-img/onions.png",
+      "categoryId": "cat_veggies",
+      "mrp": 45.0,
+      "sellingPrice": 38.0,
+      "inStock": true,
+      "discountPercent": 15
+    },
+    {
+      "id": "prod_bananas",
+      "name": "Robusta Banana",
+      "unit": "6 pcs",
+      "imageUrl": "assets/figma-assests/products-img/bananas.png",
+      "categoryId": "cat_veggies",
+      "mrp": 40.0,
+      "sellingPrice": 34.0,
+      "inStock": true,
+      "discountPercent": 15
+    },
+    {
+      "id": "prod_chillies",
+      "name": "Fresh Green Chillies",
+      "unit": "100 g",
+      "imageUrl": "assets/figma-assests/products-img/chillies.png",
+      "categoryId": "cat_veggies",
+      "mrp": 15.0,
+      "sellingPrice": 12.0,
+      "inStock": true,
+      "discountPercent": 20
+    },
+    {
+      "id": "prod_amul_butter",
+      "name": "Amul Pasteurised Salted Butter",
+      "unit": "100 g",
+      "imageUrl": "assets/figma-assests/products-img/amul_butter.png",
+      "categoryId": "cat_dairy",
+      "mrp": 60.0,
+      "sellingPrice": 58.0,
+      "inStock": true,
+      "discountPercent": 3
+    },
+    {
+      "id": "prod_brownie",
+      "name": "Chocolate Walnut Brownie",
+      "unit": "1 pc",
+      "imageUrl": "assets/figma-assests/products-img/brownie.png",
+      "categoryId": "cat_dairy",
+      "mrp": 75.0,
+      "sellingPrice": 65.0,
+      "inStock": true,
+      "discountPercent": 13
+    },
+    {
+      "id": "prod_milk_blue",
+      "name": "Amul Taaza Toned Milk",
+      "unit": "500 ml",
+      "imageUrl": "assets/figma-assests/products-img/milk_blue.png",
+      "categoryId": "cat_dairy",
+      "mrp": 27.0,
+      "sellingPrice": 27.0,
+      "inStock": true,
+      "discountPercent": 0
+    },
+    {
+      "id": "prod_milk_pouch",
+      "name": "Amul Gold Full Cream Milk",
+      "unit": "500 ml",
+      "imageUrl": "assets/figma-assests/products-img/milk_pouch.png",
+      "categoryId": "cat_dairy",
+      "mrp": 33.0,
+      "sellingPrice": 33.0,
+      "inStock": true,
+      "discountPercent": 0
+    },
+    {
+      "id": "prod_icecream_cup",
+      "name": "Kwality Walls Vanilla Cup",
+      "unit": "100 ml",
+      "imageUrl": "assets/figma-assests/products-img/icecream_cup.png",
+      "categoryId": "cat_icecreams",
+      "mrp": 25.0,
+      "sellingPrice": 22.0,
+      "inStock": true,
+      "discountPercent": 12
+    },
+    {
+      "id": "prod_icecream_snack",
+      "name": "Choco Feast Ice Cream Bar",
+      "unit": "70 ml",
+      "imageUrl": "assets/figma-assests/products-img/icecream_snack.png",
+      "categoryId": "cat_icecreams",
+      "mrp": 35.0,
+      "sellingPrice": 30.0,
+      "inStock": true,
+      "discountPercent": 14
+    },
+    {
+      "id": "prod_amul_tub",
+      "name": "Amul Vanilla Gold Tub",
+      "unit": "500 ml",
+      "imageUrl": "assets/figma-assests/products-img/amul_tub.png",
+      "categoryId": "cat_icecreams",
+      "mrp": 120.0,
+      "sellingPrice": 110.0,
+      "inStock": true,
+      "discountPercent": 8
+    },
+    {
+      "id": "prod_icecream_stick",
+      "name": "Magnum Classic Chocolate Stick",
+      "unit": "80 ml",
+      "imageUrl": "assets/figma-assests/products-img/icecream_stick.png",
+      "categoryId": "cat_icecreams",
+      "mrp": 90.0,
+      "sellingPrice": 80.0,
+      "inStock": true,
+      "discountPercent": 11
+    },
+    {
+      "id": "prod_hide_and_seek",
+      "name": "Parle Hide & Seek Chocolate Chip Biscuits",
+      "unit": "120 g",
+      "imageUrl": "assets/figma-assests/products-img/hide_and_seek.png",
+      "categoryId": "cat_bakery",
+      "mrp": 35.0,
+      "sellingPrice": 30.0,
+      "inStock": true,
+      "discountPercent": 14
+    },
+    {
+      "id": "prod_dark_fantasy_red",
+      "name": "Sunfeast Dark Fantasy Choco Fills",
+      "unit": "75 g",
+      "imageUrl": "assets/figma-assests/products-img/dark_fantasy_red.png",
+      "categoryId": "cat_bakery",
+      "mrp": 40.0,
+      "sellingPrice": 35.0,
+      "inStock": true,
+      "discountPercent": 12
+    },
+    {
+      "id": "prod_biscuit_green",
+      "name": "Parle-G Gold Biscuits",
+      "unit": "100 g",
+      "imageUrl": "assets/figma-assests/products-img/biscuit_green.png",
+      "categoryId": "cat_bakery",
+      "mrp": 15.0,
+      "sellingPrice": 14.0,
+      "inStock": true,
+      "discountPercent": 7
+    },
+    {
+      "id": "prod_dark_fantasy_black",
+      "name": "Sunfeast Dark Fantasy Bourbon",
+      "unit": "150 g",
+      "imageUrl": "assets/figma-assests/products-img/dark_fantasy_black.png",
+      "categoryId": "cat_bakery",
+      "mrp": 45.0,
+      "sellingPrice": 39.0,
+      "inStock": true,
+      "discountPercent": 13
+    }
+  ]
+}

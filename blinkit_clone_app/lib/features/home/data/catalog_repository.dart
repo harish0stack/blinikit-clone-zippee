@@ -1,17 +1,12 @@
 // lib/features/home/data/catalog_repository.dart
-// Abstract repository interface — screens depend only on this contract.
-// Implementations: DemoCatalogRepository (Phase 1), SupabaseCatalogRepository (Phase 3)
-// ARCHITECTURAL RULE: screens and providers NEVER import a concrete impl directly.
-import '../models/category.dart';
-import '../models/product.dart';
+// Phase 1 — Abstract interface for catalog data access
+// Screens ONLY depend on this interface — never on the concrete implementation
+import '../models/category_model.dart';
+import '../models/product_model.dart';
 
 abstract class CatalogRepository {
-  /// Fetch top-level categories (parentId == null)
-  Future<List<Category>> getCategories();
-
-  /// Fetch products for a given [categoryId]
-  Future<List<Product>> getProductsByCategory(String categoryId);
-
-  /// Search products by [query] string
-  Future<List<Product>> searchProducts(String query);
+  Future<List<CategoryModel>> fetchCategories({String? sectionType});
+  Future<List<ProductModel>> fetchProducts({required String categoryId});
+  Future<ProductModel> fetchProductById(String productId);
+  Future<List<ProductModel>> fetchAllProducts();
 }

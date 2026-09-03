@@ -53,9 +53,21 @@ dependencies:
   # Networking
   connectivity_plus: ^6.0.3
 
+  # Typography
+  google_fonts: ^6.2.1
+
   # Code generation helpers (frozen value types)
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
+  geolocator: ^14.0.3
+  geocoding: ^5.0.0
+
+  # Firebase Cloud Messaging & Local Notifications (Phase 7)
+  firebase_core: ^3.3.0
+  firebase_messaging: ^15.1.0
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.4
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -81,7 +93,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/demo/
+    - assets/figma-assests/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
