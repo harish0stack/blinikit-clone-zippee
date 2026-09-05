@@ -62,12 +62,16 @@ dependencies:
   geolocator: ^14.0.3
   geocoding: ^5.0.0
 
-  # Firebase Cloud Messaging & Local Notifications (Phase 7)
+  # Firebase & Notifications
   firebase_core: ^3.3.0
+  firebase_auth: ^5.1.0
   firebase_messaging: ^15.1.0
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.4
+  # Voice Search & Speech Recognition (zero-cost OS native)
+  speech_to_text: ^7.3.0
   url_launcher: ^6.3.0
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -94,6 +98,12 @@ flutter:
 
   assets:
     - assets/figma-assests/icons/
+    - assets/product-images/Energy Drinks and juices/
+    - assets/product-images/Fresh Vegetables Online/
+    - assets/product-images/biscuits and cookies/
+    - assets/product-images/chips and namkeen/
+    - assets/product-images/dairy-bread-eggs/
+    - assets/product-images/pet food and supplies/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

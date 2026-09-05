@@ -1,7 +1,9 @@
 // lib/routing/app_router.dart
-// Phase 1 — Full go_router with shell + all routes
+// Full go_router with auth onboarding shell + all routes
 import 'package:go_router/go_router.dart';
 import '../features/home/presentation/screens/splash_screen.dart';
+import '../features/auth/presentation/screens/login_screen.dart';
+import '../features/auth/presentation/screens/otp_verification_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/main_shell.dart';
 import '../features/catalog/presentation/screens/category_listing_screen.dart';
@@ -12,6 +14,7 @@ import '../features/checkout/presentation/screens/checkout_screen.dart';
 import '../features/checkout/presentation/screens/payment_screen.dart';
 import '../features/profile/presentation/screens/account_screen.dart';
 import '../features/orders/presentation/screens/orders_screen.dart';
+import '../features/search/presentation/screens/search_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -20,6 +23,27 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => const SplashScreen(),
+    ),
+
+    // Onboarding Login & Phone Auth
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+
+    // OTP Verification Screen
+    GoRoute(
+      path: '/verify-otp',
+      builder: (context, state) => const OtpVerificationScreen(),
+    ),
+
+    // Search Screen — full screen with Hero search bar transition
+    GoRoute(
+      path: '/search',
+      builder: (context, state) {
+        final autoVoice = state.uri.queryParameters['voice'] == 'true';
+        return SearchScreen(autoStartVoice: autoVoice);
+      },
     ),
 
     // Shell with bottom nav

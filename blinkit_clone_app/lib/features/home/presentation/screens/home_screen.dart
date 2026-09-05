@@ -764,7 +764,7 @@ class _FigmaHeader extends ConsumerWidget {
                   const SizedBox(height: 10),
 
                   // Row 2: Search Bar (Figma exact node-id 1:79)
-                  _buildSearchBar(),
+                  _buildSearchBar(context),
                 ],
               ),
             ),
@@ -826,9 +826,15 @@ class _FigmaHeader extends ConsumerWidget {
     return Container(
       width: 44,
       height: 44,
-      decoration: const BoxDecoration(
-        color: Color(0xFF6D5008),
+      decoration: BoxDecoration(
+        color: const Color(0xCC141414),
         shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 4,
+          ),
+        ],
       ),
       child: Center(
         child: SvgPicture.asset(
@@ -841,51 +847,78 @@ class _FigmaHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      height: 46,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Row(
-        children: [
-          SvgPicture.asset(
-            'assets/figma-assests/icons/search.svg',
-            width: 20,
-            height: 20,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Search "healthy snacks"',
-              style: GoogleFonts.nunitoSans(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF4B5563),
+  Widget _buildSearchBar(BuildContext context) {
+    return Hero(
+      tag: 'search_bar_hero',
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          height: 46,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
               ),
-            ),
+            ],
           ),
-          Container(
-            width: 1,
-            height: 22,
-            color: const Color(0xFFD5D5D5),
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => context.push('/search'),
+                  child: Container(
+                    color: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/figma-assests/icons/search.svg',
+                          width: 20,
+                          height: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Search "healthy snacks"',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: false,
+                            style: GoogleFonts.nunitoSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF4B5563),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 22,
+                color: const Color(0xFFD5D5D5),
+              ),
+              GestureDetector(
+                onTap: () => context.push('/search?voice=true'),
+                child: Container(
+                  color: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  child: SvgPicture.asset(
+                    'assets/figma-assests/icons/mic.svg',
+                    width: 22,
+                    height: 22,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          SvgPicture.asset(
-            'assets/figma-assests/icons/mic.svg',
-            width: 22,
-            height: 22,
-          ),
-        ],
+        ),
       ),
     );
   }

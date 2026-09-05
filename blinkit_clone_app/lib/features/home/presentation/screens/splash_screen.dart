@@ -1,9 +1,8 @@
-// lib/features/home/presentation/screens/splash_screen.dart
-// Pixel-perfect Blinkit splash screen with #F7CB45 background
-// and smooth Zoom-In + Fade-Out (Dissolve) exit transition to Home
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../../auth/data/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -67,11 +66,22 @@ class _SplashScreenState extends State<SplashScreen>
     _entryController.forward();
 
     // 3. Trigger exit sequence after brief brand showcase
-    Future.delayed(const Duration(milliseconds: 1400), () {
+    Future.delayed(const Duration(milliseconds: 1400), () async {
+      bool isLoggedIn = false;
+      bool isGuest = false;
+      try {
+        isLoggedIn = FirebaseAuth.instance.currentUser != null;
+        isGuest = await AuthService().isGuestUser();
+      } catch (_) {
+        // Fallback gracefully in test/headless environments
+      }
+
+      final targetRoute = (isLoggedIn || isGuest) ? '/home' : '/login';
+
       if (mounted) {
         _exitController.forward().then((_) {
           if (mounted) {
-            context.go('/home');
+            context.go(targetRoute);
           }
         });
       }
@@ -102,22 +112,43 @@ class _SplashScreenState extends State<SplashScreen>
           child: AnimatedBuilder(
             animation: Listenable.merge([_entryController, _exitController]),
             builder: (context, child) {
-              final scale = _entryScaleAnim.value * _exitZoomAnim.value;
-              final opacity = (_entryFadeAnim.value * _exitFadeAnim.value).clamp(0.0, 1.0);
+              final currentScale = _exitController.isAnimating ||
+                      _exitController.isCompleted
+                  ? _exitZoomAnim.value * _entryScaleAnim.value
+                  : _entryScaleAnim.value;
+
+              final currentOpacity = _exitController.isAnimating ||
+                      _exitController.isCompleted
+                  ? _exitFadeAnim.value
+                  : _entryFadeAnim.value;
 
               return Opacity(
-                opacity: opacity,
+                opacity: currentOpacity.clamp(0.0, 1.0),
                 child: Transform.scale(
-                  scale: scale,
+                  scale: currentScale,
                   child: child,
                 ),
               );
             },
             child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.75,
+              width: 590,
+              height: 590,
               child: Image.asset(
                 'assets/figma-assests/icons/splash-screen.avif',
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/figma-assests/icons/splash-screen.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.shopping_bag_outlined,
+                        size: 90,
+                        color: Color(0xFF1E1E1E),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ),
