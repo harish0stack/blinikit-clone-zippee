@@ -8,14 +8,36 @@ import 'package:blinkit_clone_app/features/search/presentation/controllers/searc
 import 'package:blinkit_clone_app/features/search/data/local_search_index.dart';
 import 'package:blinkit_clone_app/features/cart/presentation/providers/cart_provider.dart';
 import 'package:blinkit_clone_app/features/home/models/product_model.dart';
+import 'package:blinkit_clone_app/features/home/models/category_model.dart';
+import 'package:blinkit_clone_app/features/home/data/catalog_repository.dart';
+import 'package:blinkit_clone_app/features/home/presentation/providers/catalog_providers.dart';
+
+class FakeCatalogRepository implements CatalogRepository {
+  @override
+  Future<List<CategoryModel>> fetchCategories({String? sectionType}) async => [];
+
+  @override
+  Future<List<ProductModel>> fetchProducts({required String categoryId}) async => [];
+
+  @override
+  Future<ProductModel> fetchProductById(String productId) async => throw UnimplementedError();
+
+  @override
+  Future<List<ProductModel>> fetchAllProducts() async => [];
+}
 
 void main() {
+  final testOverrides = [
+    catalogRepositoryProvider.overrideWithValue(FakeCatalogRepository()),
+  ];
+
   group('Search Feature UI & Logic Tests', () {
     testWidgets('SearchScreen renders Browse State sections accurately',
         (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
+        ProviderScope(
+          overrides: testOverrides,
+          child: const MaterialApp(
             home: SearchScreen(autofocus: false),
           ),
         ),
@@ -45,7 +67,7 @@ void main() {
 
     testWidgets('Typing into search field switches to Results State and displays matches',
         (tester) async {
-      final container = ProviderContainer();
+      final container = ProviderContainer(overrides: testOverrides);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
@@ -67,7 +89,7 @@ void main() {
 
     testWidgets('View cart floating pill displays dynamically when cart has items',
         (tester) async {
-      final container = ProviderContainer();
+      final container = ProviderContainer(overrides: testOverrides);
 
       // Add a product to the cart
       const testProduct = ProductModel(
@@ -98,7 +120,7 @@ void main() {
     });
 
     testWidgets('Tapping clear clears recent searches', (tester) async {
-      final container = ProviderContainer();
+      final container = ProviderContainer(overrides: testOverrides);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
