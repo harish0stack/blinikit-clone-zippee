@@ -1,16 +1,18 @@
 // src/lib/supabaseClient.ts
-// STUB: initialized in Phase 3
-// Uses Supavisor pooler-compatible REST API (port 6543 for DB connections — handled server-side)
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../types/database.types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
+  console.warn(
     "Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in environment variables. " +
-      "Copy vendor-hub-web/.env.example to .env.local and fill in the values."
+      "Make sure .env is configured with your Supabase credentials."
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient<Database>(
+  supabaseUrl || "",
+  supabaseAnonKey || ""
+);

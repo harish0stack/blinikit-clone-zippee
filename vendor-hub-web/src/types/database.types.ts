@@ -7,8 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -164,27 +162,75 @@ export type Database = {
           },
         ]
       }
+      dev_payments: {
+        Row: {
+          cart_order_id: string | null
+          created_at: string
+          id: string
+          order_id: string
+          paid_at: string | null
+          payable_amount: number
+          provider: string
+          requested_amount: number
+          sender_name: string | null
+          status: string
+          upi_vpa: string
+          user_id: string | null
+          utr: string | null
+        }
+        Insert: {
+          cart_order_id?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          paid_at?: string | null
+          payable_amount: number
+          provider?: string
+          requested_amount: number
+          sender_name?: string | null
+          status?: string
+          upi_vpa: string
+          user_id?: string | null
+          utr?: string | null
+        }
+        Update: {
+          cart_order_id?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          paid_at?: string | null
+          payable_amount?: number
+          provider?: string
+          requested_amount?: number
+          sender_name?: string | null
+          status?: string
+          upi_vpa?: string
+          user_id?: string | null
+          utr?: string | null
+        }
+        Relationships: []
+      }
       device_tokens: {
         Row: {
           id: string
           platform: string
           token: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           id?: string
           platform: string
           token: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           id?: string
           platform?: string
           token?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -470,18 +516,24 @@ export type Database = {
         Row: {
           auth_user_id: string
           id: string
+          phone_number: string | null
+          phone_verified: boolean
           role: string
           vendor_id: string
         }
         Insert: {
           auth_user_id: string
           id?: string
+          phone_number?: string | null
+          phone_verified?: boolean
           role?: string
           vendor_id: string
         }
         Update: {
           auth_user_id?: string
           id?: string
+          phone_number?: string | null
+          phone_verified?: boolean
           role?: string
           vendor_id?: string
         }
@@ -498,23 +550,38 @@ export type Database = {
       vendors: {
         Row: {
           business_name: string
+          categories: Json | null
+          contact_name: string | null
           created_at: string
+          designation: string | null
           gstin: string | null
           id: string
+          onboarding_status: string
+          spoc_name: string | null
           status: string
         }
         Insert: {
           business_name: string
+          categories?: Json | null
+          contact_name?: string | null
           created_at?: string
+          designation?: string | null
           gstin?: string | null
           id?: string
+          onboarding_status?: string
+          spoc_name?: string | null
           status?: string
         }
         Update: {
           business_name?: string
+          categories?: Json | null
+          contact_name?: string | null
           created_at?: string
+          designation?: string | null
           gstin?: string | null
           id?: string
+          onboarding_status?: string
+          spoc_name?: string | null
           status?: string
         }
         Relationships: []
@@ -544,12 +611,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -573,11 +640,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -598,11 +665,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -618,43 +685,3 @@ export type TablesUpdate<
       ? U
       : never
     : never
-
-export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
-
-export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
-
-export const Constants = {
-  public: {
-    Enums: {},
-  },
-} as const

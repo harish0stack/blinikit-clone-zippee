@@ -8,6 +8,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../network/supabase_client.dart';
+import '../cache/hive_service.dart';
+import '../cache/cache_keys.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -117,12 +119,25 @@ class FcmService {
         }
       });
 
-      // Show immediate Welcome System Notification on first app launch
-      await showSystemNotification(
-        id: 1001,
-        title: 'Welcome to Blinkit ⚡',
-        body: "India's last minute app! Groceries delivered to your doorstep in 14 minutes.",
-      );
+      // Show Welcome System Notification ONCE for fresh install / new session
+      try {
+        final box = await HiveService.openBox<bool>(CacheKeys.userProfile);
+        final hasShownWelcome = box.get('has_shown_welcome_notification') ?? false;
+
+        if (!hasShownWelcome) {
+          await showSystemNotification(
+            id: 1001,
+            title: 'Welcome to Blinkit ⚡',
+            body: "India's last minute app! Groceries delivered to your doorstep in 14 minutes.",
+          );
+          await box.put('has_shown_welcome_notification', true);
+          debugPrint('[FCM] Welcome notification triggered for new user.');
+        } else {
+          debugPrint('[FCM] Welcome notification skipped (already triggered for this user session).');
+        }
+      } catch (e) {
+        debugPrint('[FCM] Error checking welcome notification status: $e');
+      }
     } catch (e, stack) {
       debugPrint('[FCM] Error initializing FCM service: $e\n$stack');
     }
@@ -186,69 +201,7 @@ class FcmService {
     }
   }
 
-  /// Schedule the 15-second exit push notification.
-  /// Dual implementation:
-  /// 1. OS-level AlarmManager: Exact hardware-level alarm scheduled for +15s (100% guaranteed, even if app is brutally killed or offline).
-  /// 2. Cloud Edge Function: Dispatches FCM push via Google Play Services in background.
-  static Future<void> scheduleExitPushNotification({int delaySeconds = 15}) async {
-    // 1. Android OS AlarmManager exact scheduled notification
-    try {
-      final androidDetails = AndroidNotificationDetails(
-        _channel.id,
-        _channel.name,
-        channelDescription: _channel.description,
-        importance: Importance.max,
-        priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
-        playSound: true,
-        enableVibration: true,
-        styleInformation: const BigTextStyleInformation(
-          'Your favorite snacks & groceries are waiting with exclusive deals. Tap to claim!',
-        ),
-      );
-
-      final scheduledTime = tz.TZDateTime.now(tz.local).add(Duration(seconds: delaySeconds));
-      await _localNotifs.zonedSchedule(
-        kExitOfferNotificationId,
-        '⚡ 70% Flat OFF Available!',
-        'Your favorite snacks & groceries are waiting with exclusive deals. Tap to claim!',
-        scheduledTime,
-        NotificationDetails(android: androidDetails),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-      );
-      debugPrint('[FCM] Hardware OS Alarm scheduled for $delaySeconds seconds from now.');
-    } catch (e) {
-      debugPrint('[FCM] Error scheduling local exact alarm: $e');
-    }
-
-    // 2. Cloud Edge Function FCM trigger
-    if (_cachedToken != null && _cachedToken!.isNotEmpty) {
-      try {
-        debugPrint('[FCM] Invoking send-push-notification in cloud...');
-        supabase.functions.invoke(
-          'send-push-notification',
-          body: {
-            'token': _cachedToken,
-            'delaySeconds': delaySeconds,
-            'type': 'delayed_offer',
-            'title': '⚡ 70% Flat OFF Available!',
-            'content':
-                'Your favorite snacks & groceries are waiting with exclusive deals. Tap to claim!',
-          },
-        ).then((res) {
-          debugPrint('[FCM] Cloud push scheduled successfully: ${res.data}');
-        }).catchError((e) {
-          debugPrint('[FCM] Cloud push invoke error: $e');
-        });
-      } catch (e) {
-        debugPrint('[FCM] Exception invoking cloud push: $e');
-      }
-    }
-  }
-
-  /// Cancel exit notification if the user re-opens the app before 15 seconds elapse
+  /// Cancel exit notification if the user re-opens the app
   static Future<void> cancelExitPushNotification() async {
     try {
       await _localNotifs.cancel(kExitOfferNotificationId);

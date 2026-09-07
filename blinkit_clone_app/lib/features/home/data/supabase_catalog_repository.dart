@@ -19,7 +19,33 @@ class SupabaseCatalogRepository implements CatalogRepository {
   List<ProductModel>? _cachedAllProducts;
 
   SupabaseCatalogRepository({SupabaseClient? client})
-      : _client = client ?? supabase;
+      : _client = client ?? supabase {
+    _initRealtimeSync();
+  }
+
+  void _initRealtimeSync() {
+    try {
+      _client
+          .channel('public:catalog_sync')
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'products',
+            callback: (payload) {
+              debugPrint('[SupabaseCatalog] Realtime product sync event: ${payload.eventType}');
+              _cachedAllProducts = null;
+              final newCat = payload.newRecord['category_id']?.toString();
+              final oldCat = payload.oldRecord['category_id']?.toString();
+              if (newCat != null) _cachedCategoryProducts.remove(newCat);
+              if (oldCat != null) _cachedCategoryProducts.remove(oldCat);
+              if (newCat == null && oldCat == null) _cachedCategoryProducts.clear();
+            },
+          )
+          .subscribe();
+    } catch (e) {
+      debugPrint('[SupabaseCatalog] Realtime subscription init error: $e');
+    }
+  }
 
   @override
   Future<List<CategoryModel>> fetchCategories({String? sectionType}) async {

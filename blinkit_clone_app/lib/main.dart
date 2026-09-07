@@ -12,21 +12,5 @@ void main() async {
   // Initialize Firebase Cloud Messaging & System Notifications
   await FcmService.initialize();
 
-  // Listen to lifecycle events: when the app is exited or swiped away from RAM
-  AppLifecycleListener(
-    onResume: () {
-      debugPrint('[Lifecycle] App resumed');
-      FcmService.cancelExitPushNotification();
-    },
-    onPause: () {
-      debugPrint('[Lifecycle] App paused (minimized / exiting)');
-      FcmService.scheduleExitPushNotification(delaySeconds: 15);
-    },
-    onDetach: () {
-      debugPrint('[Lifecycle] App detached (process being terminated)');
-      FcmService.scheduleExitPushNotification(delaySeconds: 15);
-    },
-  );
-
   runApp(const BlinkitApp());
 }

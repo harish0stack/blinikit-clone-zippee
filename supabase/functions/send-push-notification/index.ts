@@ -1,7 +1,10 @@
 // supabase/functions/send-push-notification/index.ts
-// Phase 7 — Supabase Edge Function to dispatch FCM v1 System Push Notifications
-// Uses EdgeRuntime.waitUntil for instant HTTP response (<50ms) and background 15s execution
+// Supabase Edge Function: Real-time Vendor Product Push Notification Dispatcher
+// Dispatches high-priority FCM v1 push notifications to all consumer devices when a vendor publishes a product.
+// Delivered via Google Play Services / Apple APNs even when the consumer app is killed/terminated.
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -62,7 +65,6 @@ async function getGoogleOAuthAccessToken(serviceAccount: any): Promise<string> {
 
   const jwt = `${unsignedToken}.${signature}`;
 
-  // Exchange JWT for OAuth2 bearer token
   const tokenResp = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -79,42 +81,66 @@ async function getGoogleOAuthAccessToken(serviceAccount: any): Promise<string> {
   return tokenData.access_token;
 }
 
-// Send push notification through FCM v1 HTTP API
+// Send high-priority push notification through FCM v1 HTTP API
+// Configured with high priority and system notification headers so it is delivered even when app is killed
 async function sendFcmMessage(
   accessToken: string,
   projectId: string,
   token: string,
   title: string,
   body: string,
+  imageUrl?: string,
   dataPayload?: Record<string, string>,
 ) {
   const fcmUrl = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
+  
+  const message: Record<string, any> = {
+    token: token,
+    notification: {
+      title,
+      body,
+      ...(imageUrl ? { image: imageUrl } : {}),
+    },
+    android: {
+      priority: "HIGH",
+      notification: {
+        channel_id: "blinkit_notifications",
+        sound: "default",
+        default_sound: true,
+        default_vibrate_timings: true,
+        notification_priority: "PRIORITY_HIGH",
+        visibility: "PUBLIC",
+        ...(imageUrl ? { image: imageUrl } : {}),
+      },
+    },
+    apns: {
+      headers: {
+        "apns-priority": "10",
+        "apns-push-type": "alert",
+      },
+      payload: {
+        aps: {
+          alert: {
+            title,
+            body,
+          },
+          sound: "default",
+          badge: 1,
+          "content-available": 1,
+        },
+      },
+      ...(imageUrl ? { fcm_options: { image: imageUrl } } : {}),
+    },
+    data: dataPayload ?? {},
+  };
+
   const response = await fetch(fcmUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      message: {
-        token: token,
-        notification: {
-          title,
-          body,
-        },
-        android: {
-          priority: "HIGH",
-          notification: {
-            channel_id: "blinkit_notifications",
-            sound: "default",
-            default_sound: true,
-            default_vibrate_timings: true,
-            notification_priority: "PRIORITY_HIGH",
-          },
-        },
-        data: dataPayload ?? {},
-      },
-    }),
+    body: JSON.stringify({ message }),
   });
 
   const resJson = await response.json();
@@ -122,7 +148,7 @@ async function sendFcmMessage(
 }
 
 serve(async (req: Request) => {
-  // CORS Preflight
+  // Handle CORS
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -131,87 +157,161 @@ serve(async (req: Request) => {
     const rawSecret = Deno.env.get("FCM_SERVICE_ACCOUNT_JSON");
     if (!rawSecret) {
       return new Response(
-        JSON.stringify({ error: "FCM_SERVICE_ACCOUNT_JSON not set in Supabase secrets" }),
+        JSON.stringify({ error: "FCM_SERVICE_ACCOUNT_JSON secret not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
     const serviceAccount = JSON.parse(rawSecret);
+
+    // Initialize Supabase admin client for data lookups
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const reqBody = await req.json().catch(() => ({}));
-    const {
-      token,
-      type = "delayed_offer",
-      delaySeconds = 0,
-      title,
-      content,
-    } = reqBody;
 
-    if (!token) {
-      return new Response(
-        JSON.stringify({ error: "Missing required 'token' parameter" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    // Support both direct invocation and Database Webhook payloads (type: 'INSERT' / record)
+    const record = reqBody.record || reqBody.product || {};
+    const productId = reqBody.productId || record.id;
+    let productName = reqBody.productName || record.name;
+    let vendorName = reqBody.vendorName || reqBody.vendorBusinessName;
+    let sellingPrice = reqBody.sellingPrice ?? reqBody.price ?? record.selling_price;
+    let unit = reqBody.unit || record.unit || "1 pack";
+    let imageUrl = reqBody.imageUrl || record.image_url;
+    const directToken = reqBody.token;
 
-    let notifTitle = title;
-    let notifBody = content;
+    // If productId is provided without full details, fetch from database
+    if (productId && (!productName || !vendorName || sellingPrice === undefined || !imageUrl)) {
+      const { data: productData } = await supabase
+        .from("products")
+        .select(`
+          id, name, unit, selling_price, mrp, vendor_id,
+          vendors ( business_name, name ),
+          product_images ( webp_url, is_primary )
+        `)
+        .eq("id", productId)
+        .maybeSingle();
 
-    if (!notifTitle || !notifBody) {
-      if (type === "welcome") {
-        notifTitle = "Welcome to Blinkit ⚡";
-        notifBody = "India's last minute app! Groceries delivered to your doorstep in 14 minutes.";
-      } else {
-        notifTitle = "⚡ 70% Flat OFF Available!";
-        notifBody = "Your favorite snacks & groceries are waiting with exclusive deals. Tap to claim!";
+      if (productData) {
+        productName = productName || productData.name;
+        sellingPrice = sellingPrice ?? productData.selling_price;
+        unit = unit || productData.unit || "1 pack";
+        vendorName =
+          vendorName ||
+          productData.vendors?.business_name ||
+          productData.vendors?.name ||
+          "Blinkit Store";
+
+        if (!imageUrl && productData.product_images && productData.product_images.length > 0) {
+          const primary = productData.product_images.find((img: any) => img.is_primary) || productData.product_images[0];
+          imageUrl = primary?.webp_url;
+        }
       }
     }
 
-    // Task that sends the notification
+    vendorName = vendorName || "Partner Store";
+    productName = productName || "New Product";
+    const priceStr = sellingPrice !== undefined ? `₹${sellingPrice}` : "";
+
+    // Construct the requested notification message:
+    // Format: "{vendor business name} uploaded {product name} with {price} - Available now"
+    const notifTitle = `🛍️ ${vendorName} • Available now!`;
+    const notifBody = `${productName}${priceStr ? ` at ${priceStr}` : ""}${unit ? ` (${unit})` : ""} is now available for 10-minute delivery.`;
+
+    console.log(`[Push Dispatch] Preparing push for: "${productName}" from "${vendorName}" at ${priceStr}`);
+
+    const dataPayload: Record<string, string> = {
+      click_action: "FLUTTER_NOTIFICATION_CLICK",
+      type: "new_product_upload",
+      productId: productId ? String(productId) : "",
+      productName: String(productName),
+      vendorName: String(vendorName),
+      price: String(sellingPrice ?? ""),
+      unit: String(unit),
+      status: "available_now",
+      ...(imageUrl ? { imageUrl: String(imageUrl) } : {}),
+    };
+
+    // Task that dispatches push notifications to target tokens
     const dispatchTask = async () => {
       try {
-        if (delaySeconds > 0) {
-          console.log(`[Push Background] Waiting ${delaySeconds}s before dispatch...`);
-          await new Promise((resolve) => setTimeout(resolve, delaySeconds * 1000));
+        const accessToken = await getGoogleOAuthAccessToken(serviceAccount);
+
+        let tokensToSend: string[] = [];
+
+        if (directToken) {
+          tokensToSend = [directToken];
+        } else {
+          // Fetch all registered consumer device tokens from database
+          const { data: deviceTokens, error: tokenError } = await supabase
+            .from("device_tokens")
+            .select("token");
+
+          if (tokenError) {
+            console.error("[Push] Error fetching device tokens:", tokenError);
+          } else if (deviceTokens && deviceTokens.length > 0) {
+            tokensToSend = deviceTokens.map((d: any) => d.token).filter(Boolean);
+          }
         }
 
-        const accessToken = await getGoogleOAuthAccessToken(serviceAccount);
-        const result = await sendFcmMessage(
-          accessToken,
-          serviceAccount.project_id,
-          token,
-          notifTitle,
-          notifBody,
-          {
-            click_action: "FLUTTER_NOTIFICATION_CLICK",
-            type: type,
-          },
+        console.log(`[Push] Dispatching to ${tokensToSend.length} device(s)...`);
+
+        // Send to all device tokens concurrently
+        const results = await Promise.allSettled(
+          tokensToSend.map((t) =>
+            sendFcmMessage(
+              accessToken,
+              serviceAccount.project_id,
+              t,
+              notifTitle,
+              notifBody,
+              imageUrl,
+              dataPayload,
+            ),
+          ),
         );
-        console.log(`[Push Background] Result for ${token.substring(0, 10)}: HTTP ${result.status}`);
-      } catch (e) {
-        console.error(`[Push Background Error]:`, e);
+
+        const succeeded = results.filter((r) => r.status === "fulfilled" && (r as any).value?.status === 200).length;
+        console.log(`[Push] Finished dispatch: ${succeeded}/${tokensToSend.length} succeeded.`);
+      } catch (err) {
+        console.error(`[Push Background Error]:`, err);
       }
     };
 
-    // If delay > 0 and EdgeRuntime.waitUntil is available:
-    // Respond to phone in ~20ms so connection drops don't cancel execution!
     // @ts-ignore
     if (typeof EdgeRuntime !== "undefined" && EdgeRuntime.waitUntil) {
       // @ts-ignore
       EdgeRuntime.waitUntil(dispatchTask());
       return new Response(
-        JSON.stringify({ success: true, scheduled: true, delaySeconds }),
+        JSON.stringify({
+          success: true,
+          dispatched: true,
+          productName,
+          vendorName,
+          sellingPrice,
+          title: notifTitle,
+          body: notifBody,
+        }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     } else {
-      // Direct execution fallback
       await dispatchTask();
       return new Response(
-        JSON.stringify({ success: true, delivered: true }),
+        JSON.stringify({
+          success: true,
+          dispatched: true,
+          productName,
+          vendorName,
+          sellingPrice,
+          title: notifTitle,
+          body: notifBody,
+        }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
   } catch (err: any) {
-    console.error(`[Push] Error:`, err);
+    console.error(`[Push] Fatal Error:`, err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
